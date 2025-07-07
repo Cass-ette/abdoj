@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>华南师范大学OJ测评系统 - 个人中心</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            warning: '#FFAB00',
+            danger: '#F87272',
+            dark: '#1E293B',
+            light: '#F8FAFC'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+
+      .card-shadow {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .hover-scale {
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+
+      .text-balance {
+        text-wrap: balance;
+      }
+      
+      .input-focus {
+        @apply focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary;
+      }
+    }
+
+    /* 暗夜模式样式 */
+    body.dark-mode {
+      background-color: #1E293B;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode #navbar {
+      background-color: #2B3945;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .bg-white {
+      background-color: #2B3945;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .bg-light {
+      background-color: #384754;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .text-dark {
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .border-gray-300 {
+      border-color: #4B5563;
+    }
+
+    body.dark-mode .text-gray-400 {
+      color: #9CA3AF;
+    }
+
+    body.dark-mode .text-gray-500 {
+      color: #9CA3AF;
+    }
+
+    body.dark-mode .text-gray-600 {
+      color: #9CA3AF;
+    }
+    
+    /* 自定义动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-light text-dark min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header id="navbar" class="bg-white shadow-md fixed w-full z-50 transition-all duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a href="#" class="flex items-center">
+            <i class="fa fa-code text-primary text-2xl mr-2"></i>
+            <span class="text-xl font-bold text-primary">SCNU OJ</span>
+          </a>
+        </div>
+
+        <!-- 导航链接 - 桌面版 -->
+        <nav class="hidden md:flex space-x-8">
+          <a href="#" class="text-primary font-medium hover:text-primary/80 transition-colors">首页</a>
+          <a href="#problems" class="text-dark font-medium hover:text-primary transition-colors">题目</a>
+          <a href="#contests" class="text-dark font-medium hover:text-primary transition-colors">比赛</a>
+          <a href="#rank" class="text-dark font-medium hover:text-primary transition-colors">排名</a>
+          <a href="#courses" class="text-dark font-medium hover:text-primary transition-colors">课程</a>
+          <a href="#" class="text-dark font-medium hover:text-primary transition-colors">个人中心</a>
+          <a href="#discussion" class="text-dark font-medium hover:text-primary transition-colors">讨论区</a>
+          <a href="#contact" class="text-dark font-medium hover:text-primary transition-colors">联系我们</a>
+        </nav>
+
+        <!-- 用户操作区 -->
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <input type="text" placeholder="搜索题目、用户..."
+              class="pl-10 pr-4 py-2 rounded-full border border-gray-300 input-focus transition-all">
+            <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          </div>
+
+          <!-- 暗夜模式切换按钮 -->
+          <button id="dark-mode-toggle" class="text-gray-500 hover:text-primary">
+            <i class="fa fa-moon-o text-xl"></i>
+          </button>
+
+          <div class="hidden md:flex items-center space-x-2">
+            <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+              <i class="fa fa-sign-in mr-1"></i> 登录
+            </button>
+            <button class="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors">
+              <i class="fa fa-user-plus mr-1"></i> 注册
+            </button>
+          </div>
+
+          <!-- 移动端菜单按钮 -->
+          <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-primary">
+            <i class="fa fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+      <div class="container mx-auto px-4 py-3 space-y-2">
+        <a href="#" class="block py-2 text-primary font-medium">首页</a>
+        <a href="#problems" class="block py-2 text-dark hover:text-primary">题目</a>
+        <a href="#contests" class="block py-2 text-dark hover:text-primary">比赛</a>
+        <a href="#rank" class="block py-2 text-dark hover:text-primary">排名</a>
+        <a href="#courses" class="block py-2 text-dark hover:text-primary">课程</a>
+        <a href="#" class="block py-2 text-dark hover:text-primary">个人中心</a>
+        <a href="#discussion" class="block py-2 text-dark hover:text-primary">讨论区</a>
+        <a href="#contact" class="block py-2 text-dark hover:text-primary">联系我们</a>
+        <div class="flex space-x-2 pt-2">
+          <button class="flex-1 px-4 py-2 rounded-lg bg-primary text-white">
+            <i class="fa fa-sign-in mr-1"></i> 登录
+          </button>
+          <button class="flex-1 px-4 py-2 rounded-lg border border-primary text-primary">
+            <i class="fa fa-user-plus mr-1"></i> 注册
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow pt-20">
+    <!-- 个人中心区域 -->
+    <section id="personal-center" class="py-16 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">个人中心</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            查看和管理你的个人信息和编程记录
+          </p>
+        </div>
+        
+        <!-- 个人信息编辑 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+          <div class="bg-light rounded-xl p-6 card-shadow">
+            <div class="flex flex-col items-center">
+              <div class="relative mb-4">
+                <div class="w-32 h-32 rounded-full bg-gray-200 overflow-hidden">
+                  <img id="user-avatar" src="https://picsum.photos/200/200?random=6" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <label for="avatar-upload" class="absolute bottom-0 right-0 bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-camera"></i>
+                  <input id="avatar-upload" type="file" accept="image/*" class="hidden">
+                </label>
+              </div>
+              
+              <div class="w-full">
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+                  <input type="text" id="user-name" value="陈同学" class="w-full px-4 py-2 rounded-lg border border-gray-300 input-focus">
+                </div>
+                
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+                  <input type="email" id="user-email" value="chen@example.com" class="w-full px-4 py-2 rounded-lg border border-gray-300 input-focus">
+                </div>
+                
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">个性签名</label>
+                  <textarea id="user-signature" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 input-focus">Keep calm and code on.</textarea>
+                </div>
+                
+                <div class="flex space-x-3">
+                  <button id="save-profile" class="flex-1 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                    <i class="fa fa-save mr-1"></i> 保存修改
+                  </button>
+                  <button id="cancel-edit" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
+                    取消
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 统计信息 -->
+          <div class="lg:col-span-2 bg-light rounded-xl p-6 card-shadow">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- 饼图统计 -->
+              <div class="bg-white p-4 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">提交记录统计</h3>
+                <div class="h-64">
+                  <canvas id="submissions-chart"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                  <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                    <span class="text-sm">通过 (876)</span>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                    <span class="text-sm">答案错误 (245)</span>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
+                    <span class="text-sm">超时 (65)</span>
+                  </div>
+                  <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                    <span class="text-sm">编译错误 (48)</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 统计数据卡片 -->
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-lg hover-scale">
+                  <div class="text-4xl font-bold text-primary mb-1">2,450</div>
+                  <div class="text-gray-600">总积分</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg hover-scale">
+                  <div class="text-4xl font-bold text-secondary mb-1">1,234</div>
+                  <div class="text-gray-600">提交次数</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg hover-scale">
+                  <div class="text-4xl font-bold text-green-500 mb-1">71%</div>
+                  <div class="text-gray-600">通过率</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg hover-scale">
+                  <div class="text-4xl font-bold text-warning mb-1">123</div>
+                  <div class="text-gray-600">今日提交</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 最近提交记录 -->
+        <div class="bg-light rounded-xl p-6 card-shadow">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold">最近提交记录</h3>
+            <div class="flex space-x-2">
+              <div class="relative">
+                <select class="pl-4 pr-10 py-2 rounded-lg border border-gray-300 input-focus appearance-none bg-white">
+                  <option>全部题目</option>
+                  <option>已通过</option>
+                  <option>未通过</option>
+                </select>
+                <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+              </div>
+              <a href="#" class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                查看全部 <i class="fa fa-angle-right ml-1"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">题目</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">难度</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">提交时间</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用时</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">内存</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">语言</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-medium text-gray-900">A+B Problem</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      入门
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-07 14:30</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-green-600 flex items-center">
+                      <i class="fa fa-check-circle mr-1"></i> 通过
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.01s</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1.2MB</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Python</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-primary hover:underline cursor-pointer">
+                    查看详情
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-medium text-gray-900">斐波那契数列</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      简单
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-07 14:20</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-red-600 flex items-center">
+                      <i class="fa fa-times-circle mr-1"></i> 答案错误
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.02s</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2.0MB</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">C++</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-primary hover:underline cursor-pointer">
+                    查看详情
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-medium text-gray-900">最大子数组和</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      中等
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-07 14:10</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-green-600 flex items-center">
+                      <i class="fa fa-check-circle mr-1"></i> 通过
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">0.03s</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3.5MB</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Java</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-primary hover:underline cursor-pointer">
+                    查看详情
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-medium text-gray-900">排序算法</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                      困难
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-07 14:00</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-yellow-600 flex items-center">
+                      <i class="fa fa-clock-o mr-1"></i> 超时
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1.02s</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.8MB</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Python</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-primary hover:underline cursor-pointer">
+                    查看详情
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-medium text-gray-900">字符串匹配</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      进阶
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-07 13:50</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-blue-600 flex items-center">
+                      <i class="fa fa-exclamation-circle mr-1"></i> 编译错误
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">C++</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-primary hover:underline cursor-pointer">
+                    查看详情
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- 分页 -->
+          <div class="flex items-center justify-between pt-4">
+            <div class="flex-1 flex justify-between sm:hidden justify-center">
+              <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                上一页
+              </button>
+              <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                下一页
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-light py-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <p>&copy; 2025 华南师范大学OJ测评系统. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 移动端菜单切换
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // 暗夜模式切换
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        darkModeToggle.innerHTML = '<i class="fa fa-sun-o text-xl"></i>';
+      } else {
+        darkModeToggle.innerHTML = '<i class="fa fa-moon-o text-xl"></i>';
+      }
+    });
+    
+    // 头像上传预览
+    const avatarUpload = document.getElementById('avatar-upload');
+    const userAvatar = document.getElementById('user-avatar');
+    
+    avatarUpload.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          userAvatar.src = e.target.result;
+          userAvatar.classList.add('animate-fadeIn');
+          setTimeout(() => {
+            userAvatar.classList.remove('animate-fadeIn');
+          }, 300);
+        }
+        
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+    
+    // 保存个人信息
+    const saveProfileBtn = document.getElementById('save-profile');
+    const cancelEditBtn = document.getElementById('cancel-edit');
+    const userName = document.getElementById('user-name');
+    const userEmail = document.getElementById('user-email');
+    const userSignature = document.getElementById('user-signature');
+    
+    // 初始值备份
+    const initialValues = {
+      name: userName.value,
+      email: userEmail.value,
+      signature: userSignature.value,
+      avatar: userAvatar.src
+    };
+    
+    saveProfileBtn.addEventListener('click', function() {
+      // 这里应该有AJAX请求保存数据
+      // 模拟保存成功
+      const saveToast = document.createElement('div');
+      saveToast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-fadeIn';
+      saveToast.innerHTML = '<i class="fa fa-check mr-1"></i> 个人信息已保存';
+      document.body.appendChild(saveToast);
+      
+      setTimeout(() => {
+        saveToast.remove();
+      }, 3000);
+    });
+    
+    cancelEditBtn.addEventListener('click', function() {
+      userName.value = initialValues.name;
+      userEmail.value = initialValues.email;
+      userSignature.value = initialValues.signature;
+      userAvatar.src = initialValues.avatar;
+    });
+    
+    // 提交记录饼图
+    const ctx = document.getElementById('submissions-chart').getContext('2d');
+    const submissionsChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['通过', '答案错误', '超时', '编译错误'],
+        datasets: [{
+          data: [876, 245, 65, 48],
+          backgroundColor: [
+            '#22c55e', // 通过 - 绿色
+            '#ef4444', // 答案错误 - 红色
+            '#eab308', // 超时 - 黄色
+            '#3b82f6', // 编译错误 - 蓝色
+          ],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        },
+        cutout: '70%',
+        animation: {
+          animateScale: true,
+          animateRotate: true
+        }
+      }
+    });
+    
+    // 监听暗夜模式切换，更新图表样式
+    darkModeToggle.addEventListener('click', function() {
+      submissionsChart.update();
+    });
+  </script>
+</body>
+
+</html>
+    
