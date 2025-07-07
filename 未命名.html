@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>华南师范大学OJ测评系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            warning: '#FFAB00',
+            danger: '#F87272',
+            dark: '#1E293B',
+            light: '#F8FAFC'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+
+      .card-shadow {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .hover-scale {
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+
+      .text-balance {
+        text-wrap: balance;
+      }
+    }
+
+    /* 暗夜模式样式 */
+    body.dark-mode {
+      background-color: #1E293B;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode #navbar {
+      background-color: #2B3945;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .bg-white {
+      background-color: #2B3945;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .bg-light {
+      background-color: #384754;
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .text-dark {
+      color: #F8FAFC;
+    }
+
+    body.dark-mode .border-gray-300 {
+      border-color: #4B5563;
+    }
+
+    body.dark-mode .text-gray-400 {
+      color: #9CA3AF;
+    }
+
+    body.dark-mode .text-gray-500 {
+      color: #9CA3AF;
+    }
+
+    body.dark-mode .text-gray-600 {
+      color: #9CA3AF;
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-light text-dark min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header id="navbar" class="bg-white shadow-md fixed w-full z-50 transition-all duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a href="#" class="flex items-center">
+            <i class="fa fa-code text-primary text-2xl mr-2"></i>
+            <span class="text-xl font-bold text-primary">SCNU OJ</span>
+          </a>
+        </div>
+
+        <!-- 导航链接 - 桌面版 -->
+        <nav class="hidden md:flex space-x-8">
+          <a href="#" class="text-primary font-medium hover:text-primary/80 transition-colors">首页</a>
+          <a href="#problems" class="text-dark font-medium hover:text-primary transition-colors">题目</a>
+          <a href="#contests" class="text-dark font-medium hover:text-primary transition-colors">比赛</a>
+          <a href="#rank" class="text-dark font-medium hover:text-primary transition-colors">排名</a>
+          <a href="#courses" class="text-dark font-medium hover:text-primary transition-colors">课程</a>
+          <a href="#contact" class="text-dark font-medium hover:text-primary transition-colors">联系我们</a>
+        </nav>
+
+        <!-- 用户操作区 -->
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <input type="text" placeholder="搜索题目、用户..."
+              class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
+            <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          </div>
+
+          <!-- 暗夜模式切换按钮 -->
+          <button id="dark-mode-toggle" class="text-gray-500 hover:text-primary">
+            <i class="fa fa-moon-o text-xl"></i>
+          </button>
+
+          <div class="hidden md:flex items-center space-x-2">
+            <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+              <i class="fa fa-sign-in mr-1"></i> 登录
+            </button>
+            <button class="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors">
+              <i class="fa fa-user-plus mr-1"></i> 注册
+            </button>
+          </div>
+
+          <!-- 移动端菜单按钮 -->
+          <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-primary">
+            <i class="fa fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+      <div class="container mx-auto px-4 py-3 space-y-2">
+        <a href="#" class="block py-2 text-primary font-medium">首页</a>
+        <a href="#problems" class="block py-2 text-dark hover:text-primary">题目</a>
+        <a href="#contests" class="block py-2 text-dark hover:text-primary">比赛</a>
+        <a href="#rank" class="block py-2 text-dark hover:text-primary">排名</a>
+        <a href="#courses" class="block py-2 text-dark hover:text-primary">课程</a>
+        <a href="#contact" class="block py-2 text-dark hover:text-primary">联系我们</a>
+        <div class="flex space-x-2 pt-2">
+          <button class="flex-1 px-4 py-2 rounded-lg bg-primary text-white">
+            <i class="fa fa-sign-in mr-1"></i> 登录
+          </button>
+          <button class="flex-1 px-4 py-2 rounded-lg border border-primary text-primary">
+            <i class="fa fa-user-plus mr-1"></i> 注册
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow pt-20">
+    <!-- 英雄区域 -->
+    <section class="bg-gradient-to-br from-primary/90 to-primary py-16 md:py-24">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 text-white mb-10 md:mb-0">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight mb-4">
+              提升编程能力<br>从华南师范大学OJ开始
+            </h1>
+            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 mb-8 max-w-xl text-balance">
+              提供高质量的编程题目和实时评测系统，帮助学生提升算法思维和编程能力，适用于课程学习、竞赛训练和自我提升。
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <a href="#problems" class="px-6 py-3 bg-white text-primary rounded-lg font-medium hover:bg-gray-100 transition-colors shadow-lg">
+                <i class="fa fa-list-ul mr-2"></i>浏览题目
+              </a>
+              <a href="#contests" class="px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors">
+                <i class="fa fa-trophy mr-2"></i>参与比赛
+              </a>
+            </div>
+          </div>
+          <div class="md:w-1/2 flex justify-center">
+            <div class="bg-white rounded-xl p-4 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-300">
+              <div class="bg-dark rounded-lg overflow-hidden">
+                <div class="h-8 bg-gray-800 flex items-center px-3">
+                  <div class="flex space-x-1">
+                    <div class="w-3 h-3 rounded-full bg-danger"></div>
+                    <div class="w-3 h-3 rounded-full bg-warning"></div>
+                    <div class="w-3 h-3 rounded-full bg-secondary"></div>
+                  </div>
+                  <div class="ml-auto text-gray-400 text-sm">main.cpp</div>
+                </div>
+                <div class="p-4 text-gray-300 font-mono text-sm">
+                  <pre>
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int a, b;
+    cin &gt;&gt; a &gt;&gt; b;
+    cout &lt;&lt; "Hello, SCNU OJ!" &lt;&lt; endl;
+    cout &lt;&lt; a + b &lt;&lt; endl;
+    return 0;
+}
+                  </pre>
+                </div>
+                <div class="bg-gray-800 p-2 text-gray-400 text-xs flex justify-between">
+                  <div>Memory: 1.2 MB</div>
+                  <div class="text-green-400">Time: 0.01s</div>
+                  <div class="text-blue-400">Status: Accepted</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 统计数据 -->
+    <section class="py-12 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="bg-light rounded-xl p-6 text-center card-shadow hover-scale">
+            <div class="text-primary text-4xl mb-2">
+              <i class="fa fa-code"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1">3,500+</h3>
+            <p class="text-gray-600">高质量题目</p>
+          </div>
+          <div class="bg-light rounded-xl p-6 text-center card-shadow hover-scale">
+            <div class="text-secondary text-4xl mb-2">
+              <i class="fa fa-users"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1">12,000+</h3>
+            <p class="text-gray-600">注册用户</p>
+          </div>
+          <div class="bg-light rounded-xl p-6 text-center card-shadow hover-scale">
+            <div class="text-warning text-4xl mb-2">
+              <i class="fa fa-trophy"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1">500+</h3>
+            <p class="text-gray-600">编程比赛</p>
+          </div>
+          <div class="bg-light rounded-xl p-6 text-center card-shadow hover-scale">
+            <div class="text-danger text-4xl mb-2">
+              <i class="fa fa-check-circle"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-1">2,500,000+</h3>
+            <p class="text-gray-600">提交记录</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 题目区域 -->
+    <section id="problems" class="py-16 bg-light">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">精选题目</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            从基础到高级，覆盖多种编程语言和算法类型，帮助你逐步提升编程能力
+          </p>
+        </div>
+
+        <!-- 题目筛选 -->
+        <div class="mb-8 bg-white rounded-xl p-4 card-shadow">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex flex-wrap gap-2">
+              <button class="px-4 py-2 rounded-lg bg-primary text-white">全部</button>
+              <button class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">入门</button>
+              <button class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">简单</button>
+              <button class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">中等</button>
+              <button class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">困难</button>
+            </div>
+            <div class="flex items-center gap-2">
+              <select class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                <option>推荐</option>
+                <option>最新添加</option>
+                <option>通过率高</option>
+                <option>通过率低</option>
+              </select>
+              <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                <i class="fa fa-filter mr-1"></i> 更多筛选
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 题目列表 -->
+        <div class="space-y-4">
+          <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+              <div class="mb-4 md:mb-0">
+                <div class="flex items-center mb-2">
+                  <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium mr-2">入门</span>
+                  <h3 class="text-xl font-semibold">A+B Problem</h3>
+                </div>
+                <p class="text-gray-600 mb-2">计算两个整数的和，是编程入门的经典题目。</p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="mr-4"><i class="fa fa-user mr-1"></i> 出题人: admin</span>
+                  <span class="mr-4"><i class="fa fa-clock-o mr-1"></i> 时间限制: 1秒</span>
+                  <span><i class="fa fa-memory mr-1"></i> 内存限制: 128MB</span>
+                </div>
+              </div>
+              <div class="flex flex-col items-end">
+                <div class="flex items-center mb-2">
+                  <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <span class="font-bold">92%</span>
+                  </div>
+                  <div class="ml-3 text-right">
+                    <div class="text-gray-600 text-sm">通过率</div>
+                    <div class="font-medium">3,245 / 3,528</div>
+                  </div>
+                </div>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-edit mr-1"></i> 提交代码
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+              <div class="mb-4 md:mb-0">
+                <div class="flex items-center mb-2">
+                  <span class="inline-block px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium mr-2">简单</span>
+                  <h3 class="text-xl font-semibold">斐波那契数列</h3>
+                </div>
+                <p class="text-gray-600 mb-2">计算斐波那契数列的第n项，可以使用递归或迭代方法解决。</p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="mr-4"><i class="fa fa-user mr-1"></i> 出题人: teacher</span>
+                  <span class="mr-4"><i class="fa fa-clock-o mr-1"></i> 时间限制: 1秒</span>
+                  <span><i class="fa fa-memory mr-1"></i> 内存限制: 128MB</span>
+                </div>
+              </div>
+              <div class="flex flex-col items-end">
+                <div class="flex items-center mb-2">
+                  <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <span class="font-bold">78%</span>
+                  </div>
+                  <div class="ml-3 text-right">
+                    <div class="text-gray-600 text-sm">通过率</div>
+                    <div class="font-medium">2,876 / 3,685</div>
+                  </div>
+                </div>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-edit mr-1"></i> 提交代码
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+              <div class="mb-4 md:mb-0">
+                <div class="flex items-center mb-2">
+                  <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium mr-2">中等</span>
+                  <h3 class="text-xl font-semibold">最短路径问题</h3>
+                </div>
+                <p class="text-gray-600 mb-2">在图中找到从起点到终点的最短路径，可以使用Dijkstra或Floyd算法。</p>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="mr-4"><i class="fa fa-user mr-1"></i> 出题人: expert</span>
+                  <span class="mr-4"><i class="fa fa-clock-o mr-1"></i> 时间限制: 2秒</span>
+                  <span><i class="fa fa-memory mr-1"></i> 内存限制: 256MB</span>
+                </div>
+              </div>
+              <div class="flex flex-col items-end">
+                <div class="flex items-center mb-2">
+                  <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <span class="font-bold">45%</span>
+                  </div>
+                  <div class="ml-3 text-right">
+                    <div class="text-gray-600 text-sm">通过率</div>
+                    <div class="font-medium">1,567 / 3,482</div>
+                  </div>
+                </div>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-edit mr-1"></i> 提交代码
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="mt-10 flex justify-center">
+          <nav class="flex items-center space-x-1">
+            <a href="#" class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">
+              <i class="fa fa-angle-left"></i>
+            </a>
+            <a href="#" class="px-4 py-2 rounded-lg bg-primary text-white">1</a>
+            <a href="#" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">2</a>
+            <a href="#" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">3</a>
+            <span class="px-4 py-2 text-gray-600">...</span>
+            <a href="#" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">25</a>
+            <a href="#" class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">
+              <i class="fa fa-angle-right"></i>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- 比赛区域 -->
+    <section id="contests" class="py-16 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">近期比赛</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            参与我们定期举办的编程比赛，与其他同学一起挑战自我，提升编程技能
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 进行中的比赛 -->
+          <div class="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl overflow-hidden card-shadow hover-scale">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-block px-3 py-1 bg-danger text-white rounded-full text-xs font-medium">进行中</span>
+                <span class="text-sm text-gray-500">剩余时间: 05:24:36</span>
+              </div>
+              <h3 class="text-xl font-bold mb-2">2025年夏季编程挑战赛</h3>
+              <p class="text-gray-600 mb-4">本次比赛涵盖基础算法、数据结构和数学问题，适合各级水平的选手参加。</p>
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center mr-4">
+                  <i class="fa fa-calendar mr-1"></i>
+                  <span>2025-07-01 10:00</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fa fa-users mr-1"></i>
+                  <span>1,248人已参加</span>
+                </div>
+              </div>
+              <button class="w-full px-4 py-3 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                <i class="fa fa-sign-in mr-1"></i> 立即参赛
+              </button>
+            </div>
+          </div>
+
+          <!-- 即将开始的比赛 -->
+          <div class="bg-light rounded-xl overflow-hidden card-shadow hover-scale">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-block px-3 py-1 bg-warning text-white rounded-full text-xs font-medium">即将开始</span>
+                <span class="text-sm text-gray-500">开始时间: 2025-07-10 14:00</span>
+              </div>
+              <h3 class="text-xl font-bold mb-2">数据结构专题赛</h3>
+              <p class="text-gray-600 mb-4">专注于各种数据结构的应用，包括链表、栈、队列、树和图等。</p>
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center mr-4">
+                  <i class="fa fa-calendar mr-1"></i>
+                  <span>2025-07-10 14:00</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fa fa-users mr-1"></i>
+                  <span>342人已报名</span>
+                </div>
+              </div>
+              <button class="w-full px-4 py-3 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors">
+                <i class="fa fa-plus mr-1"></i> 报名参赛
+              </button>
+            </div>
+          </div>
+
+          <!-- 已结束的比赛 -->
+          <div class="bg-light rounded-xl overflow-hidden card-shadow hover-scale">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-block px-3 py-1 bg-gray-400 text-white rounded-full text-xs font-medium">已结束</span>
+                <span class="text-sm text-gray-500">结束时间: 2025-06-25 18:00</span>
+              </div>
+              <h3 class="text-xl font-bold mb-2">算法入门赛</h3>
+              <p class="text-gray-600 mb-4">面向编程初学者的入门级比赛，涵盖基础算法和编程技巧。</p>
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center mr-4">
+                  <i class="fa fa-calendar mr-1"></i>
+                  <span>2025-06-25 16:00</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fa fa-users mr-1"></i>
+                  <span>876人参加</span>
+                </div>
+              </div>
+              <button class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">
+                <i class="fa fa-trophy mr-1"></i> 查看排名
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10 text-center">
+          <a href="#" class="inline-flex items-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors">
+            <i class="fa fa-list-ul mr-2"></i> 查看所有比赛
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 排名区域 -->
+    <section id="rank" class="py-16 bg-light">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">用户排名</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            查看本校编程高手的排名，激励自己不断进步
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- 排名图表 -->
+          <div class="lg:col-span-2 bg-white rounded-xl p-6 card-shadow">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">积分趋势</h3>
+              <div class="flex space-x-2">
+                <button class="px-3 py-1 rounded-lg bg-primary text-white text-sm">月</button>
+                <button class="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">季</button>
+                <button class="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm">年</button>
+              </div>
+            </div>
+            <div class="h-80">
+              <canvas id="scoreChart"></canvas>
+            </div>
+          </div>
+
+          <!-- 排名列表 -->
+          <div class="bg-white rounded-xl p-6 card-shadow">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">本周排名</h3>
+              <div class="flex items-center">
+                <i class="fa fa-refresh text-gray-400 mr-2"></i>
+                <span class="text-sm text-gray-500">最后更新: 1小时前</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center p-3 bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-lg">
+                <div class="text-2xl font-bold text-yellow-600 mr-3">1</div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3">
+                  <img src="https://picsum.photos/200/200?random=1" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow">
+                  <div class="font-medium">陈同学</div>
+                  <div class="text-sm text-gray-500">华南师范大学</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold">2,450</div>
+                  <div class="text-xs text-gray-500">积分</div>
+                </div>
+              </div>
+
+              <div class="flex items-center p-3 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg">
+                <div class="text-2xl font-bold text-gray-500 mr-3">2</div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3">
+                  <img src="https://picsum.photos/200/200?random=2" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow">
+                  <div class="font-medium">李同学</div>
+                  <div class="text-sm text-gray-500">华南师范大学</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold">2,310</div>
+                  <div class="text-xs text-gray-500">积分</div>
+                </div>
+              </div>
+
+              <div class="flex items-center p-3 bg-gradient-to-r from-orange-100 to-orange-50 rounded-lg">
+                <div class="text-2xl font-bold text-orange-600 mr-3">3</div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3">
+                  <img src="https://picsum.photos/200/200?random=3" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow">
+                  <div class="font-medium">王同学</div>
+                  <div class="text-sm text-gray-500">华南师范大学</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold">2,180</div>
+                  <div class="text-xs text-gray-500">积分</div>
+                </div>
+              </div>
+
+              <div class="flex items-center p-3 bg-white rounded-lg">
+                <div class="text-2xl font-bold text-gray-400 mr-3">4</div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3">
+                  <img src="https://picsum.photos/200/200?random=4" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow">
+                  <div class="font-medium">张同学</div>
+                  <div class="text-sm text-gray-500">华南师范大学</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold">1,940</div>
+                  <div class="text-xs text-gray-500">积分</div>
+                </div>
+              </div>
+
+              <div class="flex items-center p-3 bg-white rounded-lg">
+                <div class="text-2xl font-bold text-gray-400 mr-3">5</div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-3">
+                  <img src="https://picsum.photos/200/200?random=5" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow">
+                  <div class="font-medium">刘同学</div>
+                  <div class="text-sm text-gray-500">华南师范大学</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold">1,850</div>
+                  <div class="text-xs text-gray-500">积分</div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 text-center">
+              <a href="#" class="text-primary hover:underline">查看完整排名 <i class="fa fa-angle-right ml-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 课程区域 -->
+    <section id="courses" class="py-16 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">精选课程</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            由华南师范大学计算机学院教师精心打造的编程课程，助你系统提升编程能力
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-light rounded-xl overflow-hidden card-shadow hover-scale">
+            <div class="h-48 overflow-hidden">
+              <img src="https://picsum.photos/600/400?random=10" alt="Python编程基础" class="w-full h-full object-cover">
+            </div>
+            <div class="p-6">
+              <div class="flex items-center mb-3">
+                <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">入门</span>
+                <div class="ml-auto flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span class="text-sm font-medium">4.9</span>
+                  <span class="text-gray-500 text-xs ml-1">(1,245)</span>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold mb-2">Python编程基础</h3>
+              <p class="text-gray-600 mb-4">适合零基础的Python入门课程，从基础语法到常用数据结构，循序渐进地学习Python编程。</p>
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center mr-4">
+                  <i class="fa fa-user-circle mr-1"></i>
+                  <span>黄老师</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fa fa-users mr-1"></i>
+                  <span>2,568人学习</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-primary font-bold">免费</span>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-play-circle mr-1"></i> 开始学习
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-light rounded-xl overflow-hidden card-shadow hover-scale">
+            <div class="h-48 overflow-hidden">
+              <img src="https://picsum.photos/600/400?random=11" alt="数据结构与算法" class="w-full h-full object-cover">
+            </div>
+            <div class="p-6">
+              <div class="flex items-center mb-3">
+                <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">中等</span>
+                <div class="ml-auto flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span class="text-sm font-medium">4.8</span>
+                  <span class="text-gray-500 text-xs ml-1">(967)</span>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold mb-2">数据结构与算法</h3>
+              <p class="text-gray-600 mb-4">系统学习常见的数据结构和算法，掌握算法分析和设计方法，提升编程思维和解决问题的能力。</p>
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center mr-4">
+                  <i class="fa fa-user-circle mr-1"></i>
+                  <span>李老师</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fa fa-users mr-1"></i>
+                  <span>1,876人学习</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-primary font-bold">免费</span>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-play-circle mr-1"></i> 开始学习
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-light rounded-xl overflow-hidden card-shadow hover-scale">
+            <div class="h-48 overflow-hidden">
+              <img src="https://picsum.photos/600/400?random=12" alt="ACM竞赛进阶" class="w-full h-full object-cover">
+            </div>
+            <div class="p-6">
+              <div class="flex items-center mb-3">
+                <span class="inline-block px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">高级</span>
+                <div class="ml-auto flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span class="text-sm font-medium">4.9</span>
+                  <span class="text-gray-500 text-xs ml-1">(763)</span>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold mb-2">ACM竞赛进阶</h3>
+              <p class="text-gray-600 mb-4">面向ACM国际大学生程序设计竞赛的进阶课程，涵盖高级算法和复杂问题的解决方法。</p>
+              <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center mr-4">
+                  <i class="fa fa-user-circle mr-1"></i>
+                  <span>王老师</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fa fa-users mr-1"></i>
+                  <span>1,234人学习</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-primary font-bold">免费</span>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                  <i class="fa fa-play-circle mr-1"></i> 开始学习
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 评测演示 -->
+    <section class="py-16 bg-light">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">在线评测演示</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            体验我们的在线评测系统，实时获取代码运行结果
+          </p>
+        </div>
+
+        <div class="bg-white rounded-xl overflow-hidden card-shadow">
+          <div class="grid grid-cols-1 lg:grid-cols-2">
+            <!-- 代码编辑器 -->
+            <div class="border-r border-gray-200 p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">代码编辑器</h3>
+                <div class="flex space-x-2">
+                  <select class="px-3 py-1 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                    <option>Python 3</option>
+                    <option>C++</option>
+                    <option>Java</option>
+                    <option>C</option>
+                  </select>
+                </div>
+              </div>
+              <div class="bg-dark text-gray-300 rounded-lg p-4 font-mono text-sm h-80 overflow-auto">
+                <pre>
+def main():
+    a, b = map(int, input().split())
+    print(a + b)
+
+if __name__ == '__main__':
+    main()
+                </pre>
+              </div>
+              <div class="mt-4">
+                <h4 class="text-sm font-medium mb-2">输入样例</h4>
+                <div class="bg-gray-100 rounded-lg p-3 font-mono text-sm h-24 overflow-auto">
+                  <pre>3 5</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 运行结果 -->
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">运行结果</h3>
+                <!-- 此处省略原代码中未完整的部分 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section id="contact" class="py-16 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">联系我们</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-balance">
+            如有任何问题或建议，欢迎通过以下方式联系我们。
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-light rounded-xl p-6 card-shadow hover-scale">
+            <h3 class="text-xl font-bold mb-4">华南师范大学大学城校区</h3>
+            <p class="text-gray-600 mb-2"><i class="fa fa-map-marker mr-2"></i> 地址: 广州市番禺区广州大学城外环西路378号</p>
+            <p class="text-gray-600 mb-2"><i class="fa fa-phone mr-2"></i> 联系电话: 020 - 39310000</p>
+            <p class="text-gray-600"><i class="fa fa-envelope mr-2"></i> 邮箱: scnu@scnu.edu.cn</p>
+          </div>
+          <div class="bg-light rounded-xl p-6 card-shadow hover-scale">
+            <h3 class="text-xl font-bold mb-4">华南师范大学南海校区</h3>
+            <p class="text-gray-600 mb-2"><i class="fa fa-map-marker mr-2"></i> 地址: 佛山市南海区狮山镇南海软件科技园</p>
+            <p class="text-gray-600 mb-2"><i class="fa fa-phone mr-2"></i> 联系电话: 0757 - 86687010</p>
+            <p class="text-gray-600"><i class="fa fa-envelope mr-2"></i> 邮箱: scnu_nanhai@scnu.edu.cn</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-white shadow-md py-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-gray-600">版权所有 &copy; 华南师范大学 OJ 测评系统</p>
+    </div>
+  </footer>
+
+  <script>
+    // 暗夜模式切换逻辑
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        darkModeToggle.innerHTML = '<i class="fa fa-sun-o text-xl"></i>';
+      } else {
+        darkModeToggle.innerHTML = '<i class="fa fa-moon-o text-xl"></i>';
+      }
+    });
+
+    // 移动端菜单切换逻辑
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+
+</html>
